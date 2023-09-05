@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+   <script>
+    fetch("http://localhost:3000/todos", {
+        method: 'GET' // Corrected: 'GET' should be a string
+    })
+        .then(response => response.json())
+        .then(data => {
+            const todoList = document.getElementById("todoList");
+            data.map(todo => {
+                const span=document.createElement("div");
+                span.textContent = `Id:${todo.id}  Title: ${todo.title}, Description: ${todo.description}`;
+                const btn=document.createElement("button");
+                btn.onclick = () => handledelte(todo.id);
+                btn.innerHTML="Delete";
+                span.appendChild(btn);
+                todoList.appendChild(span);
+            });
+        })
+        .catch(error => console.error('Fetch error:', error));
+   </script>
+   <h1>To Do App</h1>
+
+   <input placeholder="enter your task title" id="title">
+   <input placeholder="Description" id="description" >
+   <button onclick="Submit()">Submit</button>
+   <div>
+   <h1 id="elements">The list will come here</h1>
+   <ul id="todoList"></ul>
+</div>
+    <script>
+        function Submit()
+        {
+             var title=document.getElementById("title").value
+             var description=document.getElementById("description").value
+             if (title === "" || description === "") {
+                document.getElementById("elements").textContent = "Empty";
+            }
+            else
+            {
+                var data = {
+                    title: title,
+                    description: description
+                };
+        
+                fetch("http://localhost:3000/todos/:id", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                }).catch(error => console.error('Fetch error:', error));
+            }
+        }
+        function handledelte(id)
+        {
+            fetch(`http://localhost:3000/todos/${id}`, {
+                method: 'DELETE' 
+            }).catch(err=>{
+                console.log(err)
+            })
+        }
+    </script>
+</body>
+
+</html>
